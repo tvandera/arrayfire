@@ -338,12 +338,9 @@ static CUfunction getKernel(const vector<Node *> &output_nodes,
 
     thread_local kc_t kernelCaches[DeviceManager::MAX_DEVICES];
 
-
     string funcName =
         getFuncName(output_nodes, full_nodes, full_ids, is_linear);
     int device = getActiveDeviceId();
-
-    printf("Calling this function on device %d: %s\n", device, funcName.c_str());
 
     kc_t::iterator idx = kernelCaches[device].find(funcName);
     kc_entry_t entry{nullptr, nullptr};
@@ -351,7 +348,7 @@ static CUfunction getKernel(const vector<Node *> &output_nodes,
     if (idx == kernelCaches[device].end()) {
         string jit_ker = getKernelString(funcName, full_nodes, full_ids,
                                          output_ids, is_linear);
-	printf("Compile thise code on device %d:\n%s\n\n", device, jit_ker.c_str());
+        saveKernel(funcName, jit_ker, ".cu");
         entry          = compileKernel(funcName.c_str(), jit_ker);
         kernelCaches[device][funcName] = entry;
     } else {
@@ -457,29 +454,8 @@ void evalNodes(vector<Param<T>> &outputs, vector<Node *> output_nodes) {
     args.push_back((void *)&blocks_x_total);
     args.push_back((void *)&num_odims);
 
-    std::cout << "Calling with " << outputs.size() << " outputs:\n";
-    for(const auto &o : outputs)
-	std::cout << o.ptr << std::endl;
-
-    cudaStream_t stream;
-    cudaStreamCreate(&stream);
-    //auto stream = getActiveStream();
-    std::cout << "Active stream: " << stream<< std::endl;
-    auto streamstate = cudaStreamQuery(stream);
-    if (streamstate == cudaSuccess) {
-	    std::cout << " Stream ready" << std::endl;
-    }
-    else if (streamstate == cudaErrorNotReady) {
-	    std::cout << " Stream NOT ready" << std::endl;
-    }
-    else if (streamstate == cudaErrorInvalidResourceHandle) {
-	    std::cout << " Stream Does not exist" << std::endl;
-    }
-
-
-
     CU_CHECK(cuLaunchKernel(ker, blocks_x, blocks_y, blocks_z, threads_x,
-                            threads_y, 1, 0, stream, args.data(),
+                            threads_y, 1, 0, getActiveStream(), args.data(),
                             NULL));
 
     // Reset the thread local vectors
