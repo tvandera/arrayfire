@@ -301,7 +301,7 @@ int getDeviceIdFromNativeId(int nativeId) {
 }
 
 cudaStream_t getStream(int device) {
-    static std::once_flag streamInitFlags[DeviceManager::MAX_DEVICES];
+    thread_local static std::once_flag streamInitFlags[DeviceManager::MAX_DEVICES];
 
     std::call_once(streamInitFlags[device], [device]() {
         DeviceManager &inst = DeviceManager::getInstance();
@@ -311,7 +311,9 @@ cudaStream_t getStream(int device) {
     return DeviceManager::getInstance().streams[device];
 }
 
-cudaStream_t getActiveStream() { return getStream(getActiveDeviceId()); }
+cudaStream_t getActiveStream() {
+    return getStream(getActiveDeviceId());
+}
 
 size_t getDeviceMemorySize(int device) {
     return getDeviceProp(device).totalGlobalMem;
@@ -498,7 +500,7 @@ DeviceManager::DeviceManager()
 
     // Initialize all streams to 0.
     // Streams will be created in setActiveDevice()
-    for (int i = 0; i < (int)MAX_DEVICES; i++) streams[i] = (cudaStream_t)0;
+    //for (int i = 0; i < (int)MAX_DEVICES; i++) streams[i] = (cudaStream_t)0;
 
     std::string deviceENV = getEnvVar("AF_CUDA_DEFAULT_DEVICE");
     if (deviceENV.empty()) {
