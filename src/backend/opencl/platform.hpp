@@ -204,7 +204,6 @@ class DeviceManager {
     unsigned mUserDeviceOffset;
 
     std::unique_ptr<graphics::ForgeManager> fgMngr;
-    std::unique_ptr<MemoryManager> memManager;
     std::unique_ptr<MemoryManagerPinned> pinnedMemManager;
     std::unique_ptr<GraphicsResourceManager> gfxManagers[MAX_DEVICES];
     std::unique_ptr<clfftSetupData> mFFTSetup;

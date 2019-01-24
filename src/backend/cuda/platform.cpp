@@ -366,13 +366,12 @@ DeviceManager &DeviceManager::getInstance() {
 }
 
 MemoryManager &memoryManager() {
-    static std::once_flag flag;
+    thread_local static std::once_flag flag;
+    thread_local static std::unique_ptr<MemoryManager> memManager;
 
-    DeviceManager &inst = DeviceManager::getInstance();
+    std::call_once(flag, [&]() { memManager.reset(new MemoryManager()); });
 
-    std::call_once(flag, [&]() { inst.memManager.reset(new MemoryManager()); });
-
-    return *(inst.memManager.get());
+    return *(memManager.get());
 }
 
 MemoryManagerPinned &pinnedMemoryManager() {
