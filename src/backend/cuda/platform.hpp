@@ -159,7 +159,6 @@ class DeviceManager {
     int setActiveDevice(int device, int native = -1);
 
     int nDevices;
-    thread_local cudaStream_t streams[MAX_DEVICES];
 
     std::unique_ptr<graphics::ForgeManager> fgMngr;
 
