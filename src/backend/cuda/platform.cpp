@@ -285,9 +285,8 @@ int getDeviceCount() { return DeviceManager::getInstance().nDevices; }
 int getActiveDeviceId() { return tlocalActiveDeviceId(); }
 
 int getDeviceNativeId(int device) {
-    if (device < (int)DeviceManager::getInstance().cuDevices.size())
-        return DeviceManager::getInstance().cuDevices[device].nativeId;
-    return -1;
+    device = device % (int)DeviceManager::getInstance().cuDevices.size();
+    return DeviceManager::getInstance().cuDevices[device].nativeId;
 }
 
 int getDeviceIdFromNativeId(int nativeId) {
@@ -543,8 +542,6 @@ int DeviceManager::setActiveDevice(int device, int nId) {
     thread_local bool retryFlag = true;
 
     int numDevices = cuDevices.size();
-
-    if (device >= numDevices) return -1;
 
     int old = getActiveDeviceId();
 
