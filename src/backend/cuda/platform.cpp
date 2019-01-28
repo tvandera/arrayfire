@@ -300,6 +300,23 @@ int getDeviceIdFromNativeId(int nativeId) {
     return devId;
 }
 
+
+struct ownStream() {
+    cudaStream_t prev_stream;
+
+    ownStream() { 
+        prev_stream = getActiveStream();
+        DeviceManager &inst = DeviceManager::getInstance();
+        CUDA_CHECK(cudaStreamCreate(&(inst.streams[device])));
+    }
+
+    ~ownStream() {
+        DeviceManager &inst = DeviceManager::getInstance();
+        CUDA_CHECK(cudaStreamDestroy(inst.streams[device]));
+        inst.streams[device] = prev_stream;
+    }
+}
+
 cudaStream_t getStream(int device) {
     static std::once_flag streamInitFlags[DeviceManager::MAX_DEVICES];
 
