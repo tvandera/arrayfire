@@ -30,7 +30,7 @@ endfunction()
 
 function(arrayfire_get_cuda_cxx_flags cuda_flags)
   if(NOT MSVC)
-    set(flags "-std=c++11 -Xcompiler -fPIC -Xcompiler ${CMAKE_CXX_COMPILE_OPTIONS_VISIBILITY}hidden")
+    set(flags "-Xcompiler -fPIC -Xcompiler ${CMAKE_CXX_COMPILE_OPTIONS_VISIBILITY}hidden")
   else()
     set(flags "-Xcompiler /wd4251 -Xcompiler /wd4068 -Xcompiler /wd4275 -Xcompiler /bigobj -Xcompiler /EHsc")
     if(CMAKE_GENERATOR MATCHES "Ninja")

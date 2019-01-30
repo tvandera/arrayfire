@@ -250,24 +250,20 @@ mark_as_advanced(MKL_RUNTIME_KERNEL_LIBRARIES)
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(MKL
   REQUIRED_VARS MKL_INCLUDE_DIR MKL_Core_LINK_LIBRARY)
-if(NOT WIN32)
-  find_library(M_LIB m)
-  mark_as_advanced(M_LIB)
-endif()
 if(MKL_FOUND)
   add_library(MKL::MKL SHARED IMPORTED)
   if(MKL_THREAD_LAYER STREQUAL "Sequential")
     set_target_properties(MKL::MKL
       PROPERTIES
         IMPORTED_LOCATION "${MKL_Core_LINK_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES "MKL::ThreadLayer;MKL::Interface;${CMAKE_DL_LIBS};${M_LIB}"
+        INTERFACE_LINK_LIBRARIES "MKL::ThreadLayer;MKL::Interface;${CMAKE_DL_LIBS}"
         INTERFACE_INCLUDE_DIRECTORIES "${MKL_INCLUDE_DIR};${MKL_FFTW_INCLUDE_DIR}"
         IMPORTED_NO_SONAME TRUE)
   else()
     set_target_properties(MKL::MKL
       PROPERTIES
         IMPORTED_LOCATION "${MKL_Core_LINK_LIBRARY}"
-        INTERFACE_LINK_LIBRARIES "MKL::ThreadLayer;MKL::Interface;MKL::ThreadingLibrary;${CMAKE_DL_LIBS};${M_LIB}"
+        INTERFACE_LINK_LIBRARIES "MKL::ThreadLayer;MKL::Interface;MKL::ThreadingLibrary;${CMAKE_DL_LIBS}"
         INTERFACE_INCLUDE_DIRECTORIES "${MKL_INCLUDE_DIR};${MKL_FFTW_INCLUDE_DIR}"
         IMPORTED_NO_SONAME TRUE)
   endif()
