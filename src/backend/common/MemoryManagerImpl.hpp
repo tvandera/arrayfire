@@ -24,7 +24,7 @@ namespace common {
 template<typename T>
 typename MemoryManager<T>::memory_info &
 MemoryManager<T>::getCurrentMemoryInfo() {
-    return memory[this->getActiveDeviceId()];
+    return memory.at(this->getActiveDeviceId());
 }
 
 template<typename T>
@@ -46,7 +46,7 @@ void MemoryManager<T>::cleanDeviceMemoryManager(int device) {
     // the lock is being held becasue the CPU backend calls sync.
     vector<void *> free_ptrs;
     size_t bytes_freed   = 0;
-    memory_info &current = memory[device];
+    memory_info &current = memory.at(device);
     {
         lock_guard_t lock(this->memory_mutex);
         // Return if all buffers are locked
@@ -242,7 +242,7 @@ void MemoryManager<T>::garbageCollect() {
 
 template<typename T>
 void MemoryManager<T>::printInfo(const char *msg, const int device) {
-    const memory_info &current = memory[device];
+    const memory_info &current = memory.at(device);
 
     printf("%s\n", msg);
     printf(
