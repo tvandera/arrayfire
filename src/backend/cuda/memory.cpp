@@ -123,13 +123,13 @@ INSTANTIATE(void *)
 
 MemoryManager::MemoryManager()
     : common::MemoryManager<cuda::MemoryManager>(
-          getDeviceCount(), common::MAX_BUFFERS,
+          getDeviceCount() * DeviceManager::MUX_DEVICES, common::MAX_BUFFERS,
           AF_MEM_DEBUG || AF_CUDA_MEM_DEBUG) {
     this->setMaxMemorySize();
 }
 
 MemoryManager::~MemoryManager() {
-    for (int n = 0; n < cuda::getDeviceCount(); n++) {
+    for (int n = 0; n < cuda::getDeviceCount() * DeviceManager::MUX_DEVICES; n++) {
         try {
             cuda::setDevice(n);
             garbageCollect();

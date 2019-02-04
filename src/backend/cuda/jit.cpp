@@ -336,7 +336,7 @@ static CUfunction getKernel(const vector<Node *> &output_nodes,
                             const bool is_linear) {
     typedef map<string, kc_entry_t> kc_t;
 
-    thread_local kc_t kernelCaches[DeviceManager::MAX_DEVICES];
+    thread_local kc_t kernelCaches[DeviceManager::MAX_MUX_DEVICES];
 
     string funcName =
         getFuncName(output_nodes, full_nodes, full_ids, is_linear);

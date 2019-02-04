@@ -300,7 +300,7 @@ int getDeviceIdFromNativeId(int nativeId) {
 }
 
 cudaStream_t getStream(int device) {
-    static std::once_flag streamInitFlags[DeviceManager::MAX_DEVICES];
+    static std::once_flag streamInitFlags[DeviceManager::MAX_MUX_DEVICES];
 
     std::call_once(streamInitFlags[device], [device]() {
         DeviceManager &inst = DeviceManager::getInstance();
@@ -389,7 +389,7 @@ graphics::ForgeManager &forgeManager() {
 }
 
 GraphicsResourceManager &interopManager() {
-    static std::once_flag initFlags[DeviceManager::MAX_DEVICES];
+    static std::once_flag initFlags[DeviceManager::MAX_MUX_DEVICES];
 
     int id = getActiveDeviceId();
 
@@ -403,15 +403,15 @@ GraphicsResourceManager &interopManager() {
 }
 
 PlanCache &fftManager() {
-    thread_local PlanCache cufftManagers[DeviceManager::MAX_DEVICES];
+    thread_local PlanCache cufftManagers[DeviceManager::MAX_MUX_DEVICES];
 
     return cufftManagers[getActiveDeviceId()];
 }
 
 BlasHandle blasHandle() {
     thread_local std::unique_ptr<cublasHandle>
-        cublasHandles[DeviceManager::MAX_DEVICES];
-    thread_local std::once_flag initFlags[DeviceManager::MAX_DEVICES];
+        cublasHandles[DeviceManager::MAX_MUX_DEVICES];
+    thread_local std::once_flag initFlags[DeviceManager::MAX_MUX_DEVICES];
 
     int id = cuda::getActiveDeviceId();
 
@@ -426,8 +426,8 @@ BlasHandle blasHandle() {
 
 SolveHandle solverDnHandle() {
     thread_local std::unique_ptr<cusolverDnHandle>
-        cusolverHandles[DeviceManager::MAX_DEVICES];
-    thread_local std::once_flag initFlags[DeviceManager::MAX_DEVICES];
+        cusolverHandles[DeviceManager::MAX_MUX_DEVICES];
+    thread_local std::once_flag initFlags[DeviceManager::MAX_MUX_DEVICES];
 
     int id = cuda::getActiveDeviceId();
 
@@ -454,8 +454,8 @@ SolveHandle solverDnHandle() {
 
 SparseHandle sparseHandle() {
     thread_local std::unique_ptr<cusparseHandle>
-        cusparseHandles[DeviceManager::MAX_DEVICES];
-    thread_local std::once_flag initFlags[DeviceManager::MAX_DEVICES];
+        cusparseHandles[DeviceManager::MAX_MUX_DEVICES];
+    thread_local std::once_flag initFlags[DeviceManager::MAX_MUX_DEVICES];
 
     int id = cuda::getActiveDeviceId();
 
@@ -497,7 +497,7 @@ DeviceManager::DeviceManager()
 
     // Initialize all streams to 0.
     // Streams will be created in setActiveDevice()
-    for (int i = 0; i < (int)MAX_DEVICES; i++) streams[i] = (cudaStream_t)0;
+    for (int i = 0; i < (int)MAX_MUX_DEVICES; i++) streams[i] = (cudaStream_t)0;
 
     std::string deviceENV = getEnvVar("AF_CUDA_DEFAULT_DEVICE");
     if (deviceENV.empty()) {

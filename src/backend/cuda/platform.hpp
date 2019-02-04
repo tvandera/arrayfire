@@ -104,6 +104,8 @@ SparseHandle sparseHandle();
 class DeviceManager {
    public:
     static const unsigned MAX_DEVICES = 16;
+    static const unsigned MUX_DEVICES = 2;
+    static const unsigned MAX_MUX_DEVICES = MAX_DEVICES * MUX_DEVICES;
 
     static bool checkGraphicsInteropCapability();
 
@@ -159,7 +161,7 @@ class DeviceManager {
     int setActiveDevice(int device, int native = -1);
 
     int nDevices;
-    cudaStream_t streams[MAX_DEVICES];
+    cudaStream_t streams[MAX_MUX_DEVICES];
 
     std::unique_ptr<graphics::ForgeManager> fgMngr;
 
@@ -167,6 +169,6 @@ class DeviceManager {
 
     std::unique_ptr<MemoryManagerPinned> pinnedMemManager;
 
-    std::unique_ptr<GraphicsResourceManager> gfxManagers[MAX_DEVICES];
+    std::unique_ptr<GraphicsResourceManager> gfxManagers[MUX_DEVICES];
 };
 }  // namespace cuda
