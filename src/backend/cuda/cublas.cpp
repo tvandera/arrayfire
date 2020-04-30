@@ -33,4 +33,8 @@ const char* errorString(cublasStatus_t err) {
 void cublasHandle::createHandle(BlasHandle* handle) {
     CUBLAS_CHECK(cublasCreate(handle));
 }
+
+void cublasHandle::destroyHandle(BlasHandle handle) {
+    //cublasDestroy(handle);
+}
 }  // namespace cuda

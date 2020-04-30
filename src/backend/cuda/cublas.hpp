@@ -33,6 +33,6 @@ class cublasHandle
     : public common::MatrixAlgebraHandle<cublasHandle, BlasHandle> {
    public:
     void createHandle(BlasHandle* handle);
-    void destroyHandle(BlasHandle handle) { cublasDestroy(handle); }
+    void destroyHandle(BlasHandle handle);
 };
 }  // namespace cuda
