@@ -274,7 +274,7 @@ std::vector<char> compileToPTX(const char *ker_name, string jit_ker) {
     NVRTC_CHECK(
         nvrtcCreateProgram(&prog, jit_ker.c_str(), ker_name, 0, NULL, NULL));
 
-    auto dev = getDeviceProp(getActiveDeviceId());
+    auto dev = getDeviceProp(getActiveDeviceId() % getDeviceCount());
     array<char, 32> arch;
     snprintf(arch.data(), arch.size(), "--gpu-architecture=compute_%d%d",
              dev.major, dev.minor);
@@ -340,7 +340,7 @@ static CUfunction getKernel(const vector<Node *> &output_nodes,
 
     string funcName =
         getFuncName(output_nodes, full_nodes, full_ids, is_linear);
-    int device = getActiveDeviceId();
+    int device = getActiveDeviceId() % getDeviceCount(); 
 
     kc_t::iterator idx = kernelCaches[device].find(funcName);
     kc_entry_t entry{nullptr, nullptr};
@@ -361,7 +361,7 @@ static CUfunction getKernel(const vector<Node *> &output_nodes,
 template<typename T>
 void evalNodes(vector<Param<T>> &outputs, vector<Node *> output_nodes) {
     int num_outputs = (int)outputs.size();
-    int device      = getActiveDeviceId();
+    int device      = getActiveDeviceId() % getDeviceCount();
 
     if (num_outputs == 0) return;
 

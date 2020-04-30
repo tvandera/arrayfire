@@ -153,6 +153,7 @@ static inline int getMinSupportedCompute(int cudaMajorVer) {
 int getBackend() { return AF_BACKEND_CUDA; }
 
 string getDeviceInfo(int device) {
+    assert(device < getDeviceCount());
     cudaDeviceProp dev = getDeviceProp(device);
 
     size_t mem_gpu_total = dev.totalGlobalMem;
@@ -206,7 +207,9 @@ void devprop(char *d_name, char *d_platform, char *d_toolkit, char *d_compute) {
         return;
     }
 
-    cudaDeviceProp dev = getDeviceProp(getActiveDeviceId());
+    int id = getActiveDeviceId() % getDeviceCount(); 
+
+    cudaDeviceProp dev = getDeviceProp(id);
 
     // Name
     snprintf(d_name, 256, "%s", dev.name);

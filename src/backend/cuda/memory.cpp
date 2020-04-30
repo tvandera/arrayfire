@@ -139,7 +139,9 @@ MemoryManager::~MemoryManager() {
     }
 }
 
-int MemoryManager::getActiveDeviceId() { return cuda::getActiveDeviceId(); }
+int MemoryManager::getActiveDeviceId() {
+    return cuda::getActiveDeviceId() % getDeviceCount(); 
+}
 
 size_t MemoryManager::getMaxMemorySize(int id) {
     return cuda::getDeviceMemorySize(id);
