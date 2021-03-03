@@ -1,4 +1,4 @@
 cudatoolkit:
-    - 10.1
+    - 11.0
 cudnn:
-    - 7.6
+    - 8.1
